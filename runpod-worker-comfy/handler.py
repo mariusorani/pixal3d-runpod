@@ -11,6 +11,7 @@ from typing import Any, Dict, Optional
 
 import requests
 import runpod
+from huggingface_hub import login as hf_login
 
 COMFY_DIR = Path(os.environ.get("COMFY_DIR", "/workspace/ComfyUI"))
 COMFY_HOST = os.environ.get("COMFY_HOST", "127.0.0.1")
@@ -43,6 +44,17 @@ def _start_comfy() -> None:
 
     env = os.environ.copy()
     env.setdefault("PYTHONUNBUFFERED", "1")
+
+    hf_token = env.get("HF_TOKEN") or env.get("HUGGINGFACE_HUB_TOKEN") or env.get("HUGGING_FACE_HUB_TOKEN")
+    if hf_token:
+        env["HF_TOKEN"] = hf_token
+        env["HUGGINGFACE_HUB_TOKEN"] = hf_token
+        env["HUGGING_FACE_HUB_TOKEN"] = hf_token
+        try:
+            hf_login(token=hf_token, add_to_git_credential=False)
+        except Exception as exc:
+            print(f"[HF] login warning: {exc}")
+
     if env.get("MODEL_CACHE_DIR"):
         env.setdefault("HF_HOME", env["MODEL_CACHE_DIR"])
         env.setdefault("HUGGINGFACE_HUB_CACHE", env["MODEL_CACHE_DIR"])

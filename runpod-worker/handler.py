@@ -8,6 +8,7 @@ from typing import Any, Dict
 
 import requests
 import runpod
+from huggingface_hub import login as hf_login
 
 PIXAL3D_DIR = Path(os.environ.get("PIXAL3D_DIR", "/workspace/Pixal3D"))
 PYTHON_BIN = os.environ.get("PYTHON_BIN", "python")
@@ -66,6 +67,19 @@ def handler(event: Dict[str, Any]) -> Dict[str, Any]:
 
         env = os.environ.copy()
         env.setdefault("ATTN_BACKEND", "sdpa")
+
+        # Hugging Face gated models, e.g. briaai/RMBG-2.0, require an auth token.
+        # Prefer RunPod endpoint env vars, but also allow the local proxy to pass hf_token in the job input.
+        hf_token = inp.get("hf_token") or env.get("HF_TOKEN") or env.get("HUGGINGFACE_HUB_TOKEN") or env.get("HUGGING_FACE_HUB_TOKEN")
+        if hf_token:
+            env["HF_TOKEN"] = hf_token
+            env["HUGGINGFACE_HUB_TOKEN"] = hf_token
+            env["HUGGING_FACE_HUB_TOKEN"] = hf_token
+            try:
+                hf_login(token=hf_token, add_to_git_credential=False)
+            except Exception as exc:
+                print(f"[HF] login warning: {exc}")
+
         if env.get("MODEL_CACHE_DIR"):
             env.setdefault("HF_HOME", env["MODEL_CACHE_DIR"])
             env.setdefault("HUGGINGFACE_HUB_CACHE", env["MODEL_CACHE_DIR"])

@@ -85,6 +85,7 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
       timeout_sec: Number(req.body.timeoutSec || 1800),
       seed: Number(req.body.seed || 42)
     };
+    if (process.env.HF_TOKEN) shared.hf_token = process.env.HF_TOKEN;
 
     const directPayload = {
       ...shared,

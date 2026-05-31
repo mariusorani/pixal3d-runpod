@@ -34,7 +34,10 @@ jobs:
           context: ./runpod-worker
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-direct:latest
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-direct:latest
+            ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-direct:hf-token-fix
+            ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-direct:${{ github.sha }}
 
   build-comfy:
     if: ${{ github.event.inputs.worker == 'comfy' || github.event.inputs.worker == 'both' }}
@@ -52,4 +55,7 @@ jobs:
           context: ./runpod-worker-comfy
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-comfy:latest
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-comfy:latest
+            ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-comfy:hf-token-fix
+            ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-comfy:${{ github.sha }}

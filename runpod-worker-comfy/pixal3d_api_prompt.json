@@ -1,0 +1,65 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "__IMAGE_FILENAME__"
+    }
+  },
+  "2": {
+    "class_type": "Pixal3DModelLoader",
+    "inputs": {
+      "model_repo": "TencentARC/Pixal3D",
+      "hf_endpoint": "https://huggingface.co",
+      "attention_backend": "auto",
+      "vram_mode": "native_low_vram",
+      "download_if_missing": true,
+      "load_moge": false,
+      "load_rembg": false,
+      "naf_mode": "fallback_if_missing",
+      "naf_target_size": "upstream",
+      "preload_naf": false,
+      "force_reload": false
+    }
+  },
+  "3": {
+    "class_type": "Pixal3DCameraControl",
+    "inputs": {
+      "fov_degrees": 49.134,
+      "distance": 2.0,
+      "mesh_scale": 1.0,
+      "image": ["1", 0]
+    }
+  },
+  "4": {
+    "class_type": "Pixal3DImageTo3D",
+    "inputs": {
+      "model": ["2", 0],
+      "image": ["1", 0],
+      "manual_fov": ["3", 0],
+      "seed": 42,
+      "pipeline_type": "1024_cascade",
+      "background_mode": "none",
+      "camera_mode": "manual",
+      "manual_camera_angle_x": 0.857556,
+      "manual_distance": 2.0,
+      "mesh_scale": 1.0,
+      "extend_pixel": 0,
+      "camera_resolution": 512,
+      "steps": 12,
+      "guidance": 7.5,
+      "texture_guidance": 1.0,
+      "max_num_tokens": 49152,
+      "force_offload": true
+    }
+  },
+  "5": {
+    "class_type": "Pixal3DExportGLB",
+    "inputs": {
+      "pixal3d_result": ["4", 0],
+      "decimation_target": 1000000,
+      "texture_size": 2048,
+      "remesh": true,
+      "filename_prefix": "pixal3d_runpod"
+    }
+  }
+}

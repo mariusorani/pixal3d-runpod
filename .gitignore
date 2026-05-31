@@ -1,0 +1,11 @@
+.env
+**/.env
+**/.venv
+**/__pycache__/
+**/*.pyc
+node_modules/
+web-app/node_modules/
+web-app/dist/
+output*.glb
+*.glb
+.DS_Store

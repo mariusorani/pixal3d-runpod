@@ -26,9 +26,11 @@ RUN python -m pip install --upgrade pip setuptools wheel && \
 RUN git clone --recursive https://github.com/microsoft/TRELLIS.2.git /workspace/TRELLIS.2 && \
     git clone -b master https://github.com/TencentARC/Pixal3D.git /workspace/Pixal3D
 
-# Install Pixal3D HF demo dependencies, including CUDA wheels used by their hosted demo.
-# These are Linux x86_64 CUDA 12.4 / Python 3.10 wheels.
-RUN python -m pip install -r /workspace/Pixal3D/requirements-hfdemo.txt && \
+# Install Pixal3D HF demo dependencies, but do not use the hosted natten wheel.
+# Pixal3D's requirements-hfdemo.txt is built for HF/H-series GPUs; A40 needs sm86 kernels.
+RUN grep -v '^https://github.com/LDYang694/Storages/releases/download/20260430/natten-' /workspace/Pixal3D/requirements-hfdemo.txt > /tmp/requirements-hfdemo-no-natten.txt && \
+    python -m pip install -r /tmp/requirements-hfdemo-no-natten.txt && \
+    NATTEN_CUDA_ARCH="8.6" NATTEN_N_WORKERS=4 python -m pip install natten==0.21.0 --no-build-isolation && \
     python -m pip install https://github.com/LDYang694/Storages/releases/download/20260430/utils3d-0.0.2-py3-none-any.whl
 
 ENV PYTHONPATH=/workspace/Pixal3D:/workspace/TRELLIS.2

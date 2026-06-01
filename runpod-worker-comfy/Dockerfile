@@ -26,7 +26,10 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git /workspace/ComfyUI &
     git clone https://github.com/Saganaki22/Pixal3D-ComfyUI.git /workspace/ComfyUI/custom_nodes/Pixal3D-ComfyUI
 
 # Install CUDA/Torch stack from Pixal3D HF demo, then ComfyUI and custom node safe deps.
-RUN python -m pip install -r /workspace/Pixal3D/requirements-hfdemo.txt && \
+# Do not use the hosted natten wheel: it is built for HF/H-series GPUs; A40 needs sm86 kernels.
+RUN grep -v '^https://github.com/LDYang694/Storages/releases/download/20260430/natten-' /workspace/Pixal3D/requirements-hfdemo.txt > /tmp/requirements-hfdemo-no-natten.txt && \
+    python -m pip install -r /tmp/requirements-hfdemo-no-natten.txt && \
+    NATTEN_CUDA_ARCH="8.6" NATTEN_N_WORKERS=4 python -m pip install natten==0.21.0 --no-build-isolation && \
     python -m pip install https://github.com/LDYang694/Storages/releases/download/20260430/utils3d-0.0.2-py3-none-any.whl && \
     python -m pip install -r /workspace/ComfyUI/requirements.txt && \
     python -m pip install -r /workspace/ComfyUI/custom_nodes/Pixal3D-ComfyUI/requirements.txt

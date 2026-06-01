@@ -38,6 +38,7 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-direct:latest
             ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-direct:hf-token-fix
             ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-direct:a40-naf-fallback
+            ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-direct:a40-sm86-natten
             ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-direct:${{ github.sha }}
 
   build-comfy:
@@ -60,4 +61,5 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-comfy:latest
             ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-comfy:hf-token-fix
             ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-comfy:a40-naf-fallback
+            ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-comfy:a40-sm86-natten
             ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-comfy:${{ github.sha }}

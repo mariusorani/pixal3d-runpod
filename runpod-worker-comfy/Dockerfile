@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONPATH=/workspace/ComfyUI:/workspace/ComfyUI/custom_nodes/Pixal3D-ComfyUI:/workspace/Pixal3D:/workspace/TRELLIS.2
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git git-lfs curl wget ca-certificates build-essential ninja-build \
+    git git-lfs curl wget ca-certificates build-essential cmake ninja-build \
     python3.10 python3.10-dev python3.10-venv python3-pip \
     libgl1 libglib2.0-0 libgomp1 ffmpeg \
     && rm -rf /var/lib/apt/lists/* \

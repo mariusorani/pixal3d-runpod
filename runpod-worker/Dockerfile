@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     ATTN_BACKEND=sdpa
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git git-lfs curl wget ca-certificates build-essential ninja-build \
+    git git-lfs curl wget ca-certificates build-essential cmake ninja-build \
     python3.10 python3.10-dev python3.10-venv python3-pip \
     libgl1 libglib2.0-0 libgomp1 ffmpeg \
     && rm -rf /var/lib/apt/lists/* \

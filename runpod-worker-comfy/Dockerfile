@@ -34,6 +34,9 @@ RUN python -m pip install -r /workspace/Pixal3D/requirements-hfdemo.txt && \
 # Let the nodepack use the cloned Pixal3D repo if it supports PIXAL3D_REPO_PATH.
 ENV PIXAL3D_REPO_PATH=/workspace/Pixal3D
 
+COPY patch_pixal3d_naf.py /workspace/patch_pixal3d_naf.py
+RUN python /workspace/patch_pixal3d_naf.py
+
 COPY pixal3d_api_prompt.json /workspace/pixal3d_api_prompt.json
 COPY handler.py /workspace/handler.py
 CMD ["python", "-u", "/workspace/handler.py"]

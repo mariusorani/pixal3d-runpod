@@ -33,5 +33,8 @@ RUN python -m pip install -r /workspace/Pixal3D/requirements-hfdemo.txt && \
 
 ENV PYTHONPATH=/workspace/Pixal3D:/workspace/TRELLIS.2
 
+COPY patch_pixal3d_naf.py /workspace/patch_pixal3d_naf.py
+RUN python /workspace/patch_pixal3d_naf.py
+
 COPY handler.py /workspace/handler.py
 CMD ["python", "-u", "/workspace/handler.py"]

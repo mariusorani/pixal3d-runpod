@@ -19,14 +19,27 @@ COMFY_PORT = int(os.environ.get("COMFY_PORT", "8188"))
 COMFY_URL = f"http://{COMFY_HOST}:{COMFY_PORT}"
 PROMPT_TEMPLATE = Path(os.environ.get("PROMPT_TEMPLATE", "/workspace/pixal3d_api_prompt.json"))
 MAX_INLINE_MB = int(os.environ.get("MAX_INLINE_MB", "80"))
+COMFY_LOG_PATH = Path(os.environ.get("COMFY_LOG_PATH", "/tmp/comfyui.log"))
 
 _comfy_proc: Optional[subprocess.Popen] = None
 
 
-def _wait_for_comfy(timeout: int = 180) -> None:
+def _tail(path: Path, chars: int = 8000) -> str:
+    try:
+        return path.read_text(errors="replace")[-chars:]
+    except Exception:
+        return ""
+
+
+def _wait_for_comfy(timeout: int = 420) -> None:
     deadline = time.time() + timeout
     last_err = None
     while time.time() < deadline:
+        if _comfy_proc and _comfy_proc.poll() is not None:
+            raise RuntimeError(
+                f"ComfyUI exited before becoming ready with code {_comfy_proc.returncode}. "
+                f"Log tail:\n{_tail(COMFY_LOG_PATH)}"
+            )
         try:
             r = requests.get(f"{COMFY_URL}/system_stats", timeout=2)
             if r.ok:
@@ -34,7 +47,7 @@ def _wait_for_comfy(timeout: int = 180) -> None:
         except Exception as e:
             last_err = e
         time.sleep(1)
-    raise RuntimeError(f"ComfyUI did not become ready within {timeout}s: {last_err}")
+    raise RuntimeError(f"ComfyUI did not become ready within {timeout}s: {last_err}. Log tail:\n{_tail(COMFY_LOG_PATH)}")
 
 
 def _start_comfy() -> None:
@@ -59,6 +72,9 @@ def _start_comfy() -> None:
         env.setdefault("HF_HOME", env["MODEL_CACHE_DIR"])
         env.setdefault("HUGGINGFACE_HUB_CACHE", env["MODEL_CACHE_DIR"])
 
+    COMFY_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    log_file = COMFY_LOG_PATH.open("a", buffering=1)
+    print(f"[ComfyUI] starting on {COMFY_URL}, log={COMFY_LOG_PATH}")
     _comfy_proc = subprocess.Popen(
         [
             "python",
@@ -71,11 +87,11 @@ def _start_comfy() -> None:
         ],
         cwd=str(COMFY_DIR),
         env=env,
-        stdout=subprocess.DEVNULL,
+        stdout=log_file,
         stderr=subprocess.STDOUT,
         text=True,
     )
-    _wait_for_comfy()
+    _wait_for_comfy(int(env.get("COMFY_START_TIMEOUT", "420")))
 
 
 def _decode_image(inp: Dict[str, Any], path: Path) -> None:

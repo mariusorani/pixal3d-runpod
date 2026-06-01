@@ -50,6 +50,7 @@ for path in TARGETS:
         print(f'already patched: {path}')
         continue
     if OLD not in text:
-        raise SystemExit(f'Patch target block not found in {path}')
+        print(f'patch target block not found, skipping: {path}')
+        continue
     path.write_text(text.replace(OLD, NEW))
     print(f'patched: {path}')

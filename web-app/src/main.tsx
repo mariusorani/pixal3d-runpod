@@ -60,8 +60,8 @@ function App() {
     steps: '12',
     guidance: '7.5',
     textureGuidance: '1.0',
-    textureSize: '2048',
-    decimationTarget: '1000000',
+    textureSize: '1024',
+    decimationTarget: '100000',
     seed: '42'
   });
 

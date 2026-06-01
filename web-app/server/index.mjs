@@ -89,7 +89,9 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
 
     const directPayload = {
       ...shared,
-      resolution: Number(req.body.resolution || (lowVram ? 1024 : 1536))
+      resolution: Number(req.body.resolution || (lowVram ? 1024 : 1536)),
+      texture_size: Number(req.body.textureSize || 1024),
+      decimation_target: Number(req.body.decimationTarget || 100000)
     };
 
     const comfyPayload = {
@@ -114,6 +116,13 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
     if (data?.id) data = await pollRunpod(endpointId, data.id, Number(payload.timeout_sec) * 1000 + 120_000);
 
     const output = normalizeOutput(data);
+    if (data?.status === 'COMPLETED' && !data?.output) {
+      return res.status(502).json({
+        ok: false,
+        error: 'RunPod completed but returned no output. The GLB is probably larger than RunPod's inline response limit. Use smaller texture/decimation settings or deploy the compact-output worker.',
+        details: data
+      });
+    }
     if (!output?.ok) {
       return res.status(502).json({ ok: false, error: output?.error || 'Generation failed', details: output });
     }

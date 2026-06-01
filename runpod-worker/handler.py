@@ -12,7 +12,7 @@ from huggingface_hub import login as hf_login
 
 PIXAL3D_DIR = Path(os.environ.get("PIXAL3D_DIR", "/workspace/Pixal3D"))
 PYTHON_BIN = os.environ.get("PYTHON_BIN", "python")
-MAX_INLINE_MB = int(os.environ.get("MAX_INLINE_MB", "80"))
+MAX_INLINE_MB = int(os.environ.get("MAX_INLINE_MB", "18"))
 
 
 def _write_input_image(inp: Dict[str, Any], workdir: Path) -> Path:
@@ -67,6 +67,8 @@ def handler(event: Dict[str, Any]) -> Dict[str, Any]:
 
         env = os.environ.copy()
         env.setdefault("ATTN_BACKEND", "sdpa")
+        env["PIXAL3D_TEXTURE_SIZE"] = str(int(inp.get("texture_size", env.get("PIXAL3D_TEXTURE_SIZE", 1024))))
+        env["PIXAL3D_DECIMATION_TARGET"] = str(int(inp.get("decimation_target", env.get("PIXAL3D_DECIMATION_TARGET", 100000))))
 
         # Hugging Face gated models, e.g. briaai/RMBG-2.0, require an auth token.
         # Prefer RunPod endpoint env vars, but also allow the local proxy to pass hf_token in the job input.

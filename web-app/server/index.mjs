@@ -119,7 +119,7 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
     if (data?.status === 'COMPLETED' && !data?.output) {
       return res.status(502).json({
         ok: false,
-        error: 'RunPod completed but returned no output. The GLB is probably larger than RunPod's inline response limit. Use smaller texture/decimation settings or deploy the compact-output worker.',
+        error: "RunPod completed but returned no output. The GLB is probably larger than RunPod's inline response limit. Use smaller texture/decimation settings or deploy the compact-output worker.",
         details: data
       });
     }

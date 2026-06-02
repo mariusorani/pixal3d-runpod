@@ -56,9 +56,9 @@
     "class_type": "Pixal3DExportGLB",
     "inputs": {
       "pixal3d_result": ["4", 0],
-      "decimation_target": 1000000,
-      "texture_size": 2048,
-      "remesh": true,
+      "decimation_target": 100000,
+      "texture_size": 1024,
+      "remesh": false,
       "filename_prefix": "pixal3d_runpod"
     }
   }

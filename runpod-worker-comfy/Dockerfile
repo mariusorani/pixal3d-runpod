@@ -37,6 +37,12 @@ RUN grep -v '^https://github.com/LDYang694/Storages/releases/download/20260430/n
     python -m pip install -r /tmp/comfyui-requirements-no-torch.txt && \
     python -m pip install -r /tmp/pixal3d-comfy-requirements-safe.txt && \
     TORCH_CUDA_ARCH_LIST="8.6" MAX_JOBS=2 python -m pip install --no-deps --no-build-isolation git+https://github.com/facebookresearch/DRTK.git && \
+    printf '%s\n' \
+      'from . import utils  # noqa' \
+      'from .rasterize import rasterize, rasterize_with_depth  # noqa' \
+      'from .render import render, render_ref  # noqa' \
+      '__version__ = "0.1.0"  # noqa' \
+      > /usr/local/lib/python3.10/dist-packages/drtk/__init__.py && \
     python -c "import torch, torchvision, torchaudio, natten, drtk; print('torch', torch.__version__); print('torchvision', torchvision.__version__); print('torchaudio', torchaudio.__version__); print('natten', natten.__version__); print('drtk ok')"
 
 # Let the nodepack use the cloned Pixal3D repo if it supports PIXAL3D_REPO_PATH.

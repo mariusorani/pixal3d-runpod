@@ -56,7 +56,7 @@ function App() {
     resolution: '1024',
     pipelineType: '1024_cascade',
     backgroundMode: 'none',
-    cameraMode: 'manual',
+    cameraMode: 'moge',
     steps: '12',
     guidance: '7.5',
     textureGuidance: '1.0',
@@ -315,8 +315,11 @@ function SettingsPanel({ variant, form, update }: { variant: Variant; form: Reco
           </div>
           <div className="field-row split">
             <label>
-              <span>Steps</span>
-              <input value={String(form.steps)} onChange={(e) => update('steps', e.target.value)} />
+              <span>Camera</span>
+              <select value={String(form.cameraMode)} onChange={(e) => update('cameraMode', e.target.value)}>
+                <option value="moge">MoGe auto</option>
+                <option value="manual">Manual front</option>
+              </select>
             </label>
             <label>
               <span>Texture</span>
@@ -325,6 +328,16 @@ function SettingsPanel({ variant, form, update }: { variant: Variant; form: Reco
                 <option value="2048">2048</option>
                 <option value="4096">4096</option>
               </select>
+            </label>
+          </div>
+          <div className="field-row split">
+            <label>
+              <span>Steps</span>
+              <input value={String(form.steps)} onChange={(e) => update('steps', e.target.value)} />
+            </label>
+            <label>
+              <span>Decimation</span>
+              <input value={String(form.decimationTarget)} onChange={(e) => update('decimationTarget', e.target.value)} />
             </label>
           </div>
           <div className="field-row split">

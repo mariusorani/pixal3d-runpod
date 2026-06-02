@@ -67,4 +67,5 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-comfy:comfy-filtered-reqs
             ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-comfy:comfy-drtk
             ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-comfy:comfy-drtk-minimal
+            ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-comfy:comfy-native-ovoxel
             ghcr.io/${{ github.repository_owner }}/pixal3d-runpod-comfy:${{ github.sha }}

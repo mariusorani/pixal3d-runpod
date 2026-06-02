@@ -83,6 +83,33 @@ def patch_naf_fallback():
         print(f'patched NAF fallback: {path}')
 
 
+def patch_comfy_native_ovoxel_postprocess():
+    path = Path('/workspace/ComfyUI/custom_nodes/Pixal3D-ComfyUI/pixal3d_comfy/runtime.py')
+    if not path.exists():
+        return
+    text = path.read_text()
+    if 'native_o_voxel_postprocess' in text:
+        print(f'already patched native o_voxel postprocess: {path}')
+        return
+    old = '''        postprocess = importlib.import_module("pixal3d_comfy.postprocess")
+        sys.modules["o_voxel.postprocess"] = postprocess
+        setattr(sys.modules["o_voxel"], "postprocess", postprocess)
+'''
+    new = '''        # native_o_voxel_postprocess: use Pixal3D/o_voxel's bundled GLB exporter.
+        # The custom Pixal3D-ComfyUI postprocess depends on DRTK, which is brittle on
+        # torch/CUDA 12.4 in this worker. Direct Pixal3D already exports successfully
+        # through the bundled o_voxel.postprocess path.
+        postprocess = importlib.import_module(f"{o_voxel_name}.postprocess")
+        sys.modules["o_voxel.postprocess"] = postprocess
+        setattr(sys.modules["o_voxel"], "postprocess", postprocess)
+'''
+    if old not in text:
+        print(f'native o_voxel postprocess block not found, skipping: {path}')
+        return
+    path.write_text(text.replace(old, new))
+    print(f'patched native o_voxel postprocess: {path}')
+
+
 def patch_inference_export_controls():
     path = Path('/workspace/Pixal3D/inference.py')
     if not path.exists():
@@ -99,4 +126,5 @@ def patch_inference_export_controls():
 
 
 patch_naf_fallback()
+patch_comfy_native_ovoxel_postprocess()
 patch_inference_export_controls()
